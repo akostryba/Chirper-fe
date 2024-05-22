@@ -6,11 +6,11 @@ import {posts} from './posts';
 import Row from 'react-bootstrap/esm/Row';
 import './Feed.css';
 
-function Feed() {
+function Feed(props) {
 
   const feed = posts.map((post) => {
     return (
-        <Post post={post}/>
+        <Post post={post} profile={props.profile}/>
     );
   })
 

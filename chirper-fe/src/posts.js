@@ -5,7 +5,12 @@
     eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
     minim veniam, quis nostrud exercitation ullamco laboris nisi ut
     aliquip ex ea commodo consequat. Duis aute irure.`, 
-    date: '2024-04-03' },
+    date: '2024-04-03',
+    comments: [{ username: 'Mark', 
+      profilePicture: "https://images.pexels.com/photos/697509/pexels-photo-697509.jpeg?cs=srgb&dl=pexels-andrewpersonaltraining-697509.jpg&fm=jpg", 
+      text: `What a twat.`, 
+      date: '2024-04-03' }] 
+    },
 
     { username: 'Mark', 
     profilePicture: "https://images.pexels.com/photos/697509/pexels-photo-697509.jpeg?cs=srgb&dl=pexels-andrewpersonaltraining-697509.jpg&fm=jpg", 
@@ -13,7 +18,12 @@
     eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
     minim veniam, quis nostrud exercitation ullamco laboris nisi ut
     aliquip ex ea commodo consequat. Duis aute irure.`, 
-    date: '2024-04-03' },
+    date: '2024-04-03',
+    comments: [{ username: 'Mark', 
+      profilePicture: "https://images.pexels.com/photos/697509/pexels-photo-697509.jpeg?cs=srgb&dl=pexels-andrewpersonaltraining-697509.jpg&fm=jpg", 
+      text: `What a twat.`, 
+      date: '2024-04-03' }] 
+  },
 
     { username: 'Alex', 
     profilePicture: "https://pbs.twimg.com/media/FjU2lkcWYAgNG6d.jpg", 
@@ -21,7 +31,12 @@
     eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
     minim veniam, quis nostrud exercitation ullamco laboris nisi ut
     aliquip ex ea commodo consequat. Duis aute irure.`, 
-    date: '2024-04-03' }
+    date: '2024-04-03' ,
+    comments: [{ username: 'Mark', 
+      profilePicture: "https://images.pexels.com/photos/697509/pexels-photo-697509.jpeg?cs=srgb&dl=pexels-andrewpersonaltraining-697509.jpg&fm=jpg", 
+      text: `What a twat.`, 
+      date: '2024-04-03' }] 
+    }
   ];
 
   export {posts};

@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navigation from './Navigation';
 import Feed from './Feed';
 import Profile from './Profile';
+import Chirp from './Chrip';
+import StaticProfile from './StaticProfile';
 
 
 function App() {
@@ -15,9 +17,10 @@ function App() {
     <Router>
       <Navigation/>
       <Routes>
-        <Route path="/" element={<Feed/>} />
+        <Route path="/" element={<Feed profile={data}/>} />
         <Route path="/profile" element={<Profile profile={data}/>} />
-        <Route path="/newPost" element={<></>} />
+        <Route path="/chirp" element={<Chirp profile={data}/>} />
+        <Route path="/viewProfile/:username" element={<StaticProfile/>} />
       </Routes>
     </Router>
   );
