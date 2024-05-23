@@ -24,7 +24,7 @@ function Chirp(props){
             <Card.Body>
                 <Row >
                     <Col xs='auto'>
-                        <Image src={props.profile.picture} roundedCircle className="profile" />
+                        <Image src={props.profile.profileImage} roundedCircle className="profile" />
                     </Col>
                     <Col className="ml-0 p-0">
                         <p className="fw-bold"> @{props.profile.username}</p>

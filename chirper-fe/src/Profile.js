@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Post from './Post';
-import {posts} from './posts';
+import {posts, users} from './mockDb';
 import Image from 'react-bootstrap/Image'
 import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
@@ -18,13 +18,13 @@ function Profile(props) {
 
     const [activeModal, setActiveModal] = useState(false);
     const [username, setUsername] = useState(props.profile.username);
-    const [image, setImage] = useState(props.profile.picture);
-    const [bio, setBio] = useState("DePaul Student");
+    const [image, setImage] = useState(props.profile.profileImage);
+    const [bio, setBio] = useState(props.profile.bio);
 
     const userPosts = posts.map((post) => {
-        if (post.username === username){
+        if (post.userId === props.profile.userId){
             return (
-                <Post post={post}/>
+                <Post post={post} profile={props.profile}/>
             );
         }
         else return <></>   
@@ -41,12 +41,11 @@ function Profile(props) {
 
     const saveEdits = (e) => {
         e.preventDefault()
-        let oldUsername = username;
-        posts.map((post) => {
-            console.log(post.username);
-            if (post.username === oldUsername){
-                post.username = e.currentTarget.elements.username.value;
-                post.profilePicture = e.currentTarget.elements.picture.value;
+        users.map((user) => {
+            if (user.userId === props.profile.userId){
+                user.username = e.currentTarget.elements.username.value;
+                user.profileImage = e.currentTarget.elements.picture.value;
+                user.bio = e.currentTarget.elements.bio;
             }
         })
         console.log(posts)

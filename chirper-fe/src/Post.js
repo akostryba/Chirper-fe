@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Tab} from 'bootstrap';
 import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
@@ -10,14 +10,17 @@ import Comment from './Comment';
 import Form from 'react-bootstrap/Form';
 import FormGroup from 'react-bootstrap/FormGroup';
 import {Link} from 'react-router-dom';
+import {comments, users} from './mockDb';
 import './Post.css';
 
 
 function Post(props){
 
+    const [commentCount, setCommentCount] = useState(0);
+    const [user, setUser] = useState(null);
     const [activeModal, setActiveModal] = useState(false);
-    const [newCommentVisible, setNewCommentVisible] = useState(false)
-    const [commentButtonVisible, setCommentButtonVisible] = useState(true)
+    const [newCommentVisible, setNewCommentVisible] = useState(false);
+    const [commentButtonVisible, setCommentButtonVisible] = useState(true);
     const enableModal = () => {
         setActiveModal(true);
     }
@@ -27,7 +30,7 @@ function Post(props){
 
     const addComment = (e) => {
         e.preventDefault();
-        props.post.comments.push({username:props.profile.username, profilePicture:props.profile.picture, text:e.currentTarget.elements.chirp.value, date:'2024-04-03'})
+        comments.push({userId:props.profile.userId, profileImage:props.profile.profileImage, text:e.currentTarget.elements.chirp.value, postId:props.post.postId, commentId:5, createdAt:'2024-04-03'})
         setNewCommentVisible(false);
         setCommentButtonVisible(true);
     }
@@ -37,30 +40,53 @@ function Post(props){
         setCommentButtonVisible(false);
     }
 
-    const comments = props.post.comments.map((comment) => {
-        return (
-            <Comment comment={comment}/>
-        );
+    const commentComps = comments.map((comment) => {
+        if (comment.postId === props.post.postId){
+            return (
+                <Comment comment={comment}/>
+            );
+        }
     })
 
+    
+
+    useEffect(() => {
+        for (var i=0; i<users.length; i++){
+            if (users[i].userId === props.post.userId){
+                setUser(users[i]);
+            }
+        }
+    }, [props.post.userId]);
+
+    useEffect(() => {
+        var count = 0;
+        for (var i=0; i<comments.length; i++){
+            if (comments[i].postId === props.post.postId){
+                count++;
+            }
+        }
+        setCommentCount(count);
+    }, [props.post.postId]);
+
+    if (user!== null){
     return (
         <Card style={{width:'50rem'}}>
             <Card.Body>
                 <Row >
                     <Col xs='auto'>
-                        <Image src={props.post.profilePicture} roundedCircle className="profile" />
+                        <Image src={user.profileImage} roundedCircle className="profile" />
                     </Col>
                     <Col className="ml-0 p-0">
-                        <p className="fw-bold"> <Link className="link-text" to={`/viewProfile/${props.post.username}`} >@{props.post.username}</Link></p>
+                        <p className="fw-bold"> <Link className="link-text" to={`/viewProfile/${user.userId}`} >@{user.username}</Link></p>
                     </Col>
                 </Row>
                 <p className="mt-2 mb-3">{props.post.text}</p>
                 <Row>
                     <Col>
-                        <p className="mb-0 text-muted">{props.post.date}</p>
+                        <p className="mb-0 text-muted">{props.post.createdAt}</p>
                     </Col>
                     <Col className="d-flex justify-content-end">
-                        <Button variant="outline-primary" size="sm" onClick={enableModal}>Comments ({props.post.comments.length})</Button>
+                        <Button variant="outline-primary" size="sm" onClick={enableModal}>Comments ({commentCount})</Button>
                     </Col>
                 </Row>
                 <Modal
@@ -74,7 +100,7 @@ function Post(props){
                         </Modal.Header>
                         <Modal.Body className='mx-2'>
                             <Row className="justify-content-center">
-                                {comments}
+                                {commentComps}
                             </Row>
                             {commentButtonVisible && (
                                 <Row className="d-flex justify-content-end mt-3">
@@ -87,7 +113,7 @@ function Post(props){
                                         <Card.Body>
                                             <Row >
                                                 <Col xs='auto'>
-                                                    <Image src={props.profile.picture} roundedCircle className="profile" />
+                                                    <Image src={props.profile.profileImage} roundedCircle className="profile" />
                                                 </Col>
                                                 <Col className="ml-0 p-0">
                                                     <p className="fw-bold"> @{props.profile.username}</p>
@@ -116,6 +142,7 @@ function Post(props){
             </Card.Body>
         </Card>
     );
+    }
 }
 
 export default Post;
