@@ -11,86 +11,138 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import './Profile.css'
 import FormGroup from 'react-bootstrap/esm/FormGroup';
-import {users, posts, followers} from './mockDb';
+//import {users, posts, followers} from './mockDb';
 import {useParams} from 'react-router-dom';
 
 
 function StaticProfile(props) {
 
-    const [bio, setBio] = useState("");
-    const [image, setImage] = useState("");
-    const [username, setUsername] = useState("");
+    const [user, setUser] = useState("");
     const { userId } = useParams();
+    const [followId, setFollowId] = useState(null);
     const [followingCount, setFollowingCount] = useState(0);
+    const [following, setFollowing] = useState(null);
     const [followerCount, setFollowersCount] = useState(0);
+    const [followers, setFollowers] = useState(null);
+    const [apiPosts, setApiPosts] = useState(null);
+    const [postsComponent, setPostsComponent] = useState(null);
     const [followButtonText, setFollowButtonText] = useState("Follow");
     const [followButtonVariant, setFollowButtonVariant] = useState("outline-primary")
-    const [activeFollow, setActiveFollow] = useState(false)
 
     useEffect(() => {
-        users.map((user) => {
-            if (user.userId === parseInt(userId)){
-                console.log("Hey")
-                setBio(user.bio);
-                setImage(user.profileImage);
-                setUsername(user.username);
-                setFollowButtonVariant("outline-primary");
-                setFollowButtonText("Follow");
-                setActiveFollow(false);
-                return;
-            }
-            });
-    }, [userId]);
+        fetch(`http://127.0.0.1:5072/users/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+        setUser(data[0]);
+        })
 
-    useEffect(() => {
-        var followingCount = 0;
-        var followerCount = 0;
-        followers.map((follow) => {
-            if (follow.followerId === parseInt(userId)){
-                followingCount++;
+        fetch(`http://127.0.0.1:5072/following/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+        setFollowing(data);
+        setFollowingCount(data.length);
+        })
+
+        fetch(`http://127.0.0.1:5072/followers/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+        const followersIds = [];
+        data.map((follower) => {
+            if (follower.followerId === props.profile.userId){
+                setFollowId(follower.id);
             }
-            else if (follow.followingId === parseInt(userId)){
-                followerCount++;
-            }
+            followersIds.push(follower.followerId);
         });
-        setFollowingCount(followingCount);
-        setFollowersCount(followerCount);
-    }, [userId])
-
-    const userPosts = posts.map((post) => {
-        if (post.userId === parseInt(userId)){
-            return (
-                <Post post={post} profile={props.profile}/>
-            );
+        setFollowers(followersIds);
+        if (followersIds.includes(props.profile.userId)){
+            setFollowButtonText("Following");
+            setFollowButtonVariant("primary");
         }
-        else return <></>   
-    })
+        setFollowersCount(data.length);
+        })
 
-    const follow = () => {
-        followers.push({followerId:props.profile.userId, followingId:parseInt(userId)})
-        setFollowersCount(followerCount+1);
-        setFollowButtonText("Followed");
-        setFollowButtonVariant("primary");
-        setActiveFollow(true);
+        fetch(`http://127.0.0.1:5072/posts/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+        setApiPosts(data);
+        })
+    }, [props.profile.userId, userId])
+
+
+    useEffect(() => {
+        if (apiPosts !== null){
+            const userPosts = apiPosts.map((post) => {
+            if (post.userId === parseInt(userId)){
+                return (
+                    <Post post={post} profile={props.profile}/>
+                );
+            }
+            else return <></>   
+            })
+            setPostsComponent(userPosts.reverse())
+        }
+
+    }, [apiPosts, userId, props.profile])
+
+    const follow = async () => {
+        if(followers.includes(props.profile.userId)){
+            await fetch(`http://127.0.0.1:5072/follow/${followId}`, {
+                method: 'DELETE',
+            });
+                
+            //setFollowersCount(followerCount-1);
+            setFollowButtonText("Follow");
+            setFollowButtonVariant("outline-primary");
+        }
+        else{
+            await fetch('http://127.0.0.1:5072/follow', {
+                method: "POST", // *GET, POST, PUT, DELETE, etc.
+                mode: "cors", // no-cors, *cors, same-origin
+                cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: "same-origin", // include, *same-origin, omit
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                redirect: "follow", // manual, *follow, error
+                referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+                body: JSON.stringify({id:0, followerId: props.profile.userId, followingId: user.userId}), // body data type must match "Content-Type" header
+                });
+            //setFollowersCount(followerCount+1);
+            setFollowButtonText("Following");
+            setFollowButtonVariant("primary");
+        }
+        await fetch(`http://127.0.0.1:5072/followers/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+        const followersIds = [];
+        data.map((follower) => {
+            if (follower.followerId === props.profile.userId){
+                setFollowId(follower.id);
+            }
+            followersIds.push(follower.followerId);
+        });
+        setFollowers(followersIds);
+        setFollowersCount(data.length);
+        });
     }
 
 
-  return (
+  if (user!==null) return (
     <Container className="justify-content-center">
         
         <Row className='justify-content-center m-3'>
             <Col xs='auto'>
-                <Image src={image} roundedCircle className="mainProfile"/>
+                <Image src={user.profileImage} roundedCircle className="mainProfile"/>
             </Col>
         </Row>
         <Row className='justify-content-center mb-2'>
             <Col>
-                <h1 className='text-center'>@{username}</h1>
+                <h1 className='text-center'>@{user.username}</h1>
             </Col>
         </Row>
         <Row className='justify-content-center'>
             <Col>
-                <p className='text-center text-muted'>{bio}</p>
+                <p className='text-center text-muted'>{user.bio}</p>
             </Col>
         </Row>
         <Row className='justify-content-center mb-2'>
@@ -99,7 +151,7 @@ function StaticProfile(props) {
             </Col>
         </Row>
         <Row className='justify-content-center mb-4'>
-                <Button variant={`${followButtonVariant}`} className='w-25' onClick={follow} disabled={activeFollow}>{followButtonText}</Button>
+                <Button variant={`${followButtonVariant}`} className='w-25' onClick={follow} >{followButtonText}</Button>
         </Row>
         
         <Row className="justify-content-center mx-0">
@@ -111,7 +163,7 @@ function StaticProfile(props) {
             >
                 <Tab eventKey="posts" title="Chirps">
                 <Row className="justify-content-center">
-                    {userPosts}
+                    {postsComponent}
                 </Row>
                 </Tab>
             </Tabs>

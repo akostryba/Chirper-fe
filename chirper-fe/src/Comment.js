@@ -10,26 +10,28 @@ import './Feed.css';
 
 function Comment(props) {
 
-    const [user, setUser] = useState(null);
+    const [apiUser, setApiUser] = useState(null);
 
     useEffect(() => {
-        for (var i=0; i<users.length; i++){
-            if (users[i].userId === props.comment.userId){
-                setUser(users[i]);
-            }
+        if (apiUser === null){
+            fetch(`http://127.0.0.1:5072/users/${props.comment.userId}`)
+            .then(response => response.json())
+            .then(data => {
+                setApiUser(data[0]);
+            })
         }
-    }, [props.comment.userId]);
+    }, [apiUser, props.comment.userId]);
 
-    if (user !== null){
+    if (apiUser !== null){
         return (
             <Card style={{width:'50rem'}}>
                 <Card.Body>
                     <Row >
                         <Col xs='auto'>
-                            <Image src={user.profileImage} roundedCircle className="profile" />
+                            <Image src={apiUser.profileImage} roundedCircle className="profile" />
                         </Col>
                         <Col className="ml-0 p-0">
-                            <p className="fw-bold"> <Link className="link-text" to={`/viewProfile/${user.username}`} >@{user.username}</Link></p>
+                            <p className="fw-bold"> <Link className="link-text" to={`/viewProfile/${apiUser.username}`} >@{apiUser.username}</Link></p>
                         </Col>
                     </Row>
                     <p className="mt-2 mb-3">{props.comment.text}</p>

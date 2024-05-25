@@ -10,17 +10,36 @@ import Comment from './Comment';
 import Form from 'react-bootstrap/Form';
 import FormGroup from 'react-bootstrap/FormGroup';
 import {Link} from 'react-router-dom';
-import {comments, users} from './mockDb';
+//import {comments, users} from './mockDb';
 import './Post.css';
 
 
 function Post(props){
 
+    const [apiComments, setApiComments] = useState(null);
+    const [apiUser, setApiUser] = useState(null);
     const [commentCount, setCommentCount] = useState(0);
-    const [user, setUser] = useState(null);
+    const [commentComponents, setCommentComponents] = useState(null);
     const [activeModal, setActiveModal] = useState(false);
     const [newCommentVisible, setNewCommentVisible] = useState(false);
     const [commentButtonVisible, setCommentButtonVisible] = useState(true);
+
+    useEffect(() => {
+        fetch(`http://127.0.0.1:5072/comments/${props.post.postId}`)
+        .then(response => response.json())
+        .then(data => {
+            setApiComments(data);
+        })
+
+        if (apiUser === null){
+            fetch(`http://127.0.0.1:5072/users/${props.post.userId}`)
+            .then(response => response.json())
+            .then(data => {
+                setApiUser(data[0]);
+            })
+        }
+    }, [apiComments, apiUser, props.post.postId, props.post.userId])
+
     const enableModal = () => {
         setActiveModal(true);
     }
@@ -28,9 +47,30 @@ function Post(props){
         setActiveModal(false);
     }
 
+    const date = () => {
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
+        const day = String(currentDate.getDate()).padStart(2, '0'); 
+
+        return `${month}-${day}-${year}`;
+    }
+
     const addComment = (e) => {
         e.preventDefault();
-        comments.push({userId:props.profile.userId, profileImage:props.profile.profileImage, text:e.currentTarget.elements.chirp.value, postId:props.post.postId, commentId:5, createdAt:'2024-04-03'})
+        //copied from JS fetch API documentation
+        fetch('http://127.0.0.1:5072/comment', {
+            method: "POST", // *GET, POST, PUT, DELETE, etc.
+            mode: "cors", // no-cors, *cors, same-origin
+            cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: "same-origin", // include, *same-origin, omit
+            headers: {
+                "Content-Type": "application/json",
+            },
+            redirect: "follow", // manual, *follow, error
+            referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+            body: JSON.stringify({userId:props.profile.userId, profileImage:props.profile.profileImage, text:e.currentTarget.elements.chirp.value, postId:props.post.postId, commentId:0, createdAt:date()}), // body data type must match "Content-Type" header
+            });
         setNewCommentVisible(false);
         setCommentButtonVisible(true);
     }
@@ -40,44 +80,43 @@ function Post(props){
         setCommentButtonVisible(false);
     }
 
-    const commentComps = comments.map((comment) => {
-        if (comment.postId === props.post.postId){
-            return (
-                <Comment comment={comment}/>
-            );
-        }
-    })
 
-    
+    useEffect(()=> {
+        if (apiComments !== null){
+            const commentComps = apiComments.map((comment) => {
+                if (comment.postId === props.post.postId){
+                    return (
+                        <Comment comment={comment}/>
+                    );
+                }
+            })
+            setCommentComponents(commentComps);
+        }
+    }, [apiComments, props.post.postId])
+
 
     useEffect(() => {
-        for (var i=0; i<users.length; i++){
-            if (users[i].userId === props.post.userId){
-                setUser(users[i]);
+        if(apiComments!==null){
+            var count = 0;
+            for (var i=0; i<apiComments.length; i++){
+                if (apiComments[i].postId === props.post.postId){
+                    count++;
+                }
             }
+            setCommentCount(count);
         }
-    }, [props.post.userId]);
+    }, [apiComments, props.post.postId]);
 
-    useEffect(() => {
-        var count = 0;
-        for (var i=0; i<comments.length; i++){
-            if (comments[i].postId === props.post.postId){
-                count++;
-            }
-        }
-        setCommentCount(count);
-    }, [props.post.postId]);
-
-    if (user!== null){
+    if (apiUser!== null){
     return (
         <Card style={{width:'50rem'}}>
             <Card.Body>
                 <Row >
                     <Col xs='auto'>
-                        <Image src={user.profileImage} roundedCircle className="profile" />
+                        <Image src={apiUser.profileImage} roundedCircle className="profile" />
                     </Col>
                     <Col className="ml-0 p-0">
-                        <p className="fw-bold"> <Link className="link-text" to={`/viewProfile/${user.userId}`} >@{user.username}</Link></p>
+                        <p className="fw-bold"> <Link className="link-text" to={`/viewProfile/${apiUser.userId}`} >@{apiUser.username}</Link></p>
                     </Col>
                 </Row>
                 <p className="mt-2 mb-3">{props.post.text}</p>
@@ -100,7 +139,7 @@ function Post(props){
                         </Modal.Header>
                         <Modal.Body className='mx-2'>
                             <Row className="justify-content-center">
-                                {commentComps}
+                                {commentComponents}
                             </Row>
                             {commentButtonVisible && (
                                 <Row className="d-flex justify-content-end mt-3">

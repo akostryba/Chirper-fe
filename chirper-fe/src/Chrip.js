@@ -13,9 +13,30 @@ import './Post.css'
 
 function Chirp(props){
 
+    const date = () => {
+          const currentDate = new Date();
+          const year = currentDate.getFullYear();
+          const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
+          const day = String(currentDate.getDate()).padStart(2, '0'); 
+
+          return `${month}-${day}-${year}`;
+    }
+
     const postChirp = (e) => {
       e.preventDefault();
-      console.log(e.currentTarget.elements.chirp.value);
+      fetch('http://127.0.0.1:5072/post', {
+            method: "POST", // *GET, POST, PUT, DELETE, etc.
+            mode: "cors", // no-cors, *cors, same-origin
+            cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: "same-origin", // include, *same-origin, omit
+            headers: {
+                "Content-Type": "application/json",
+            },
+            redirect: "follow", // manual, *follow, error
+            referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+            body: JSON.stringify({postId:0, userId:props.profile.userId, text:e.currentTarget.elements.chirp.value, createdAt:date()}), // body data type must match "Content-Type" header
+            });
+        window.location.href ='/';
     }
 
     return (
@@ -40,7 +61,7 @@ function Chirp(props){
                       />
                     </FormGroup>
                     <Row className='mx-0 mt-3 justify-content-end'>
-                      <Button className='w-25' href="/" variant="primary" type="submit">Chirp</Button>
+                      <Button className='w-25' variant="primary" type="submit">Chirp</Button>
                     </Row>
                   </Form>
                 </Row>

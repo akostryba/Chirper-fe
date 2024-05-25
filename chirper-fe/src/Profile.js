@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Post from './Post';
@@ -16,23 +16,44 @@ import FormGroup from 'react-bootstrap/esm/FormGroup';
 
 function Profile(props) {
 
+    const [apiPosts, setApiPosts] = useState(null);
+    const [userPosts, setUserPosts] = useState(null);
     const [activeModal, setActiveModal] = useState(false);
-    const [username, setUsername] = useState(props.profile.username);
-    const [image, setImage] = useState(props.profile.profileImage);
-    const [bio, setBio] = useState(props.profile.bio);
+    const [user, setUser] = useState(null);
 
-    const userPosts = posts.map((post) => {
-        if (post.userId === props.profile.userId){
-            return (
-                <Post post={post} profile={props.profile}/>
-            );
+    useEffect(() => {
+        fetch(`http://127.0.0.1:5072/posts/${props.profile.userId}`)
+        .then(response => response.json())
+        .then(data => {
+        setApiPosts(data);
+        })
+    }, [props.profile.userId])
+
+    useEffect(() => {
+        fetch(`http://127.0.0.1:5072/users/${props.profile.userId}`)
+        .then(response => response.json())
+        .then(data => {
+        setUser(data[0]);
+        })
+    }, [props.profile.userId])
+
+    useEffect(() => {
+        if (apiPosts !== null && user!== null){
+            const components = apiPosts.map((post) => {
+                if (post.userId === user.userId){
+                    return (
+                        <Post post={post} profile={user}/>
+                    );
+                }
+                else return <></>   
+            })
+            setUserPosts(components.reverse())
         }
-        else return <></>   
-    })
+    }, [apiPosts, props.profile, user])
+    
 
     const handleEditProfile = () => {
         setActiveModal(true);
-        console.log("Button clicked");
     }
 
     const hideModal = () => {
@@ -41,36 +62,33 @@ function Profile(props) {
 
     const saveEdits = (e) => {
         e.preventDefault()
-        users.map((user) => {
-            if (user.userId === props.profile.userId){
-                user.username = e.currentTarget.elements.username.value;
-                user.profileImage = e.currentTarget.elements.picture.value;
-                user.bio = e.currentTarget.elements.bio;
-            }
-        })
-        console.log(posts)
-        setUsername(e.currentTarget.elements.username.value);
-        setImage(e.currentTarget.elements.picture.value);
-        setBio(e.currentTarget.elements.bio.value);
+        fetch(`http://127.0.0.1:5072/user/${props.profile.userId}`, {
+            method: "PUT", // *GET, POST, PUT, DELETE, etc.
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({userId:0, username:e.currentTarget.elements.username.value, password:user.password, bio:e.currentTarget.elements.bio.value, profileImage:e.currentTarget.elements.picture.value}), // body data type must match "Content-Type" header
+            });
         setActiveModal(false);
+        setUser({userId:user.userId, username:e.currentTarget.elements.username.value, password:user.password, bio:e.currentTarget.elements.bio.value, profileImage:e.currentTarget.elements.picture.value})
     }
 
-  return (
+  if (user!==null) return (
     <Container className="justify-content-center">
         
         <Row className='justify-content-center m-3'>
             <Col xs='auto'>
-                <Image src={image} roundedCircle className="mainProfile"/>
+                <Image src={user.profileImage} roundedCircle className="mainProfile"/>
             </Col>
         </Row>
         <Row className='justify-content-center mb-2'>
             <Col>
-                <h1 className='text-center'>@{username}</h1>
+                <h1 className='text-center'>@{user.username}</h1>
             </Col>
         </Row>
         <Row className='justify-content-center mb-2'>
             <Col>
-                <p className='text-center text-muted'>{bio}</p>
+                <p className='text-center text-muted'>{user.bio}</p>
             </Col>
         </Row>
         <Row className='justify-content-center'>
@@ -93,7 +111,7 @@ function Profile(props) {
                                 required
                                 type="text"
                                 placeholder="@Username"
-                                defaultValue={username}
+                                defaultValue={user.username}
                                 className='mb-2'
                             />
                         </FormGroup>
@@ -102,7 +120,7 @@ function Profile(props) {
                             <Form.Control
                                 type="text"
                                 placeholder="Write something about yourself..."
-                                defaultValue={bio}
+                                defaultValue={user.bio}
                                 className='mb-2'
                             />
                         </FormGroup>
@@ -112,7 +130,7 @@ function Profile(props) {
                                 required
                                 type="text"
                                 placeholder="Image Link"
-                                defaultValue={image}
+                                defaultValue={user.profileImage}
                                 className='mb-2'
                             />
                         </FormGroup>
