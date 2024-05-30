@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Post from './Post';
-import {posts, users} from './mockDb';
 import Image from 'react-bootstrap/Image'
 import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
@@ -79,10 +78,10 @@ function Profile(props) {
                 "Content-Type": "application/json",
                 "Authorization": "Basic " + Cookies.get('base64')
             },
-            body: JSON.stringify({userId:0, username:e.currentTarget.elements.username.value, password:user.password, bio:e.currentTarget.elements.bio.value, profileImage:e.currentTarget.elements.picture.value}), // body data type must match "Content-Type" header
+            body: JSON.stringify({userId:0, username:user.username, password:user.password, bio:e.currentTarget.elements.bio.value, profileImage:e.currentTarget.elements.picture.value}), // body data type must match "Content-Type" header
             });
         setActiveModal(false);
-        setUser({userId:user.userId, username:e.currentTarget.elements.username.value, password:user.password, bio:e.currentTarget.elements.bio.value, profileImage:e.currentTarget.elements.picture.value})
+        setUser({userId:user.userId, username:user.username, password:user.password, bio:e.currentTarget.elements.bio.value, profileImage:e.currentTarget.elements.picture.value})
     }
 
   if (user!==null) return (
@@ -117,7 +116,7 @@ function Profile(props) {
                         <Modal.Title>Edit Profile</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <FormGroup controlId="username">
+                        {/* <FormGroup controlId="username">
                             <Form.Label>Username</Form.Label>
                             <Form.Control
                                 required
@@ -126,7 +125,7 @@ function Profile(props) {
                                 defaultValue={user.username}
                                 className='mb-2'
                             />
-                        </FormGroup>
+                        </FormGroup> */}
                         <FormGroup controlId="bio">
                             <Form.Label>Bio</Form.Label>
                             <Form.Control

@@ -23,6 +23,7 @@ function Login (){
             profileImage:e.currentTarget.elements.picture.value
           })
         });
+        window.location.href ='/login';
   }
 
   const authenticate = (e) => {
@@ -33,12 +34,13 @@ function Login (){
             "Content-type": "application/json",
             "Authorization": "Basic " + btoa(e.target.elements.username.value + ":" + e.target.elements.password.value)
         },
+        
         body: JSON.stringify({
             username: e.target.elements.username.value,
             password: e.target.elements.password.value
         })
     })
-    .then(response => {
+    .then(response => { 
         if (response.ok) { // Check if response went through
             return response.text();
         } else {

@@ -1,12 +1,10 @@
-import logo from './logo.svg';
 import './App.css';
-import React, {useState} from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navigation from './Navigation';
 import Feed from './Feed';
 import Profile from './Profile';
 import Chirp from './Chrip';
-import {users} from './mockDb';
 import StaticProfile from './StaticProfile';
 import Login from './Login';
 import Cookies from 'js-cookie';

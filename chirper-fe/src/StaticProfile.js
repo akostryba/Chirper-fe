@@ -7,11 +7,7 @@ import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-import Form from 'react-bootstrap/Form';
 import './Profile.css'
-import FormGroup from 'react-bootstrap/esm/FormGroup';
-//import {users, posts, followers} from './mockDb';
 import {useParams} from 'react-router-dom';
 import Cookies from 'js-cookie';
 
@@ -122,15 +118,15 @@ function StaticProfile(props) {
         else{
             await fetch('http://127.0.0.1:5072/follow', {
                 method: "POST", // *GET, POST, PUT, DELETE, etc.
-                mode: "cors", // no-cors, *cors, same-origin
-                cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-                credentials: "same-origin", // include, *same-origin, omit
+                // mode: "cors", // no-cors, *cors, same-origin
+                // cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+                // credentials: "same-origin", // include, *same-origin, omit
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": "Basic " + Cookies.get('base64')
                 },
-                redirect: "follow", // manual, *follow, error
-                referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+                // redirect: "follow", // manual, *follow, error
+                // referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
                 body: JSON.stringify({id:0, followerId: props.profile.userId, followingId: user.userId}), // body data type must match "Content-Type" header
                 });
             //setFollowersCount(followerCount+1);

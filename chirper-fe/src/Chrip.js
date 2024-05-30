@@ -1,5 +1,4 @@
 import React from 'react';
-import { Tab} from 'bootstrap';
 import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -8,7 +7,6 @@ import Form from 'react-bootstrap/Form';
 import FormGroup from 'react-bootstrap/FormGroup';
 import Button from 'react-bootstrap/Button';
 import Cookies from 'js-cookie';
-import Container from 'react-bootstrap/Container';
 import './Post.css'
 
 

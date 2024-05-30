@@ -2,10 +2,8 @@ import React, {useState, useEffect} from 'react';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
-import Modal from 'react-bootstrap/Modal';
 import Image from 'react-bootstrap/Image';
 import {Link} from 'react-router-dom';
-import {users} from './mockDb';
 import Cookies from 'js-cookie';
 import './Feed.css';
 

@@ -2,8 +2,6 @@ import React, {useState, useEffect} from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Post from './Post';
-//import {posts} from './posts';
-import {posts} from './mockDb';
 import Row from 'react-bootstrap/esm/Row';
 import './Feed.css';
 import Cookies from 'js-cookie';

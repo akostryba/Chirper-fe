@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react';
-import { Tab} from 'bootstrap';
 import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -11,7 +10,6 @@ import Form from 'react-bootstrap/Form';
 import FormGroup from 'react-bootstrap/FormGroup';
 import {Link} from 'react-router-dom';
 import Cookies from 'js-cookie';
-//import {comments, users} from './mockDb';
 import './Post.css';
 
 
