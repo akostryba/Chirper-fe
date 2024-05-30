@@ -6,6 +6,7 @@ import Post from './Post';
 import {posts} from './mockDb';
 import Row from 'react-bootstrap/esm/Row';
 import './Feed.css';
+import Cookies from 'js-cookie';
 
 function Feed(props) {
 
@@ -17,14 +18,24 @@ function Feed(props) {
 
   useEffect(() => {
     if (apiFollowingData ===null){
-      fetch(`http://127.0.0.1:5072/following/${props.profile.userId}`)
+      fetch(`http://127.0.0.1:5072/following/${props.profile.userId}`,
+        {
+            headers: {
+                "Authorization": "Basic " + Cookies.get('base64')
+            }
+        })
       .then(response => response.json())
       .then(data => {
         setApiFollowingData(data);
       })
     }
 
-    fetch('http://127.0.0.1:5072/posts')
+    fetch('http://127.0.0.1:5072/posts',
+        {
+            headers: {
+                "Authorization": "Basic " + Cookies.get('base64')
+            }
+        })
     .then(response => response.json())
     .then(data => {
       setApiPosts(data);
@@ -48,7 +59,7 @@ function Feed(props) {
     if(apiPosts!==null){
         const feed = apiPosts.map((post) => {
           return (
-            <Post post={post} profile={props.profile}/>
+            <Post key={post.postId} post={post} profile={props.profile}/>
           );
         })
         setFeed(feed.reverse());
@@ -56,7 +67,7 @@ function Feed(props) {
           const followingFeed = apiPosts.map((post) => {
             if (apiFollowing.includes(post.userId))
               return (
-                <Post post={post} profile={props.profile}/>
+                <Post key={post.postId} post={post} profile={props.profile}/>
               );
           })
           setFollowingFeed(followingFeed.reverse());

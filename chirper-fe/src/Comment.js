@@ -6,6 +6,7 @@ import Modal from 'react-bootstrap/Modal';
 import Image from 'react-bootstrap/Image';
 import {Link} from 'react-router-dom';
 import {users} from './mockDb';
+import Cookies from 'js-cookie';
 import './Feed.css';
 
 function Comment(props) {
@@ -14,7 +15,12 @@ function Comment(props) {
 
     useEffect(() => {
         if (apiUser === null){
-            fetch(`http://127.0.0.1:5072/users/${props.comment.userId}`)
+            fetch(`http://127.0.0.1:5072/users/${props.comment.userId}`,
+            {
+                headers: {
+                    "Authorization": "Basic " + Cookies.get('base64')
+                }
+            })
             .then(response => response.json())
             .then(data => {
                 setApiUser(data[0]);

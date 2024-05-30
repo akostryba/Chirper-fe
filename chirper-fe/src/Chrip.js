@@ -7,6 +7,7 @@ import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import FormGroup from 'react-bootstrap/FormGroup';
 import Button from 'react-bootstrap/Button';
+import Cookies from 'js-cookie';
 import Container from 'react-bootstrap/Container';
 import './Post.css'
 
@@ -31,6 +32,7 @@ function Chirp(props){
             credentials: "same-origin", // include, *same-origin, omit
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": "Basic " + Cookies.get('base64')
             },
             redirect: "follow", // manual, *follow, error
             referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url

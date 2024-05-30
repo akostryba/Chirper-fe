@@ -13,6 +13,7 @@ import './Profile.css'
 import FormGroup from 'react-bootstrap/esm/FormGroup';
 //import {users, posts, followers} from './mockDb';
 import {useParams} from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 
 function StaticProfile(props) {
@@ -30,20 +31,35 @@ function StaticProfile(props) {
     const [followButtonVariant, setFollowButtonVariant] = useState("outline-primary")
 
     useEffect(() => {
-        fetch(`http://127.0.0.1:5072/users/${userId}`)
+        fetch(`http://127.0.0.1:5072/users/${userId}`,
+        {
+            headers: {
+                "Authorization": "Basic " + Cookies.get('base64')
+            }
+        })
         .then(response => response.json())
         .then(data => {
         setUser(data[0]);
         })
 
-        fetch(`http://127.0.0.1:5072/following/${userId}`)
+        fetch(`http://127.0.0.1:5072/following/${userId}`,
+        {
+            headers: {
+                "Authorization": "Basic " + Cookies.get('base64')
+            }
+        })
         .then(response => response.json())
         .then(data => {
         setFollowing(data);
         setFollowingCount(data.length);
         })
 
-        fetch(`http://127.0.0.1:5072/followers/${userId}`)
+        fetch(`http://127.0.0.1:5072/followers/${userId}`,
+        {
+            headers: {
+                "Authorization": "Basic " + Cookies.get('base64')
+            }
+        })
         .then(response => response.json())
         .then(data => {
         const followersIds = [];
@@ -61,7 +77,12 @@ function StaticProfile(props) {
         setFollowersCount(data.length);
         })
 
-        fetch(`http://127.0.0.1:5072/posts/${userId}`)
+        fetch(`http://127.0.0.1:5072/posts/${userId}`,
+        {
+            headers: {
+                "Authorization": "Basic " + Cookies.get('base64')
+            }
+        })
         .then(response => response.json())
         .then(data => {
         setApiPosts(data);
@@ -74,7 +95,7 @@ function StaticProfile(props) {
             const userPosts = apiPosts.map((post) => {
             if (post.userId === parseInt(userId)){
                 return (
-                    <Post post={post} profile={props.profile}/>
+                    <Post key = {post.postId} post={post} profile={props.profile}/>
                 );
             }
             else return <></>   
@@ -88,6 +109,10 @@ function StaticProfile(props) {
         if(followers.includes(props.profile.userId)){
             await fetch(`http://127.0.0.1:5072/follow/${followId}`, {
                 method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Authorization": "Basic " + Cookies.get('base64')
+                }
             });
                 
             //setFollowersCount(followerCount-1);
@@ -102,6 +127,7 @@ function StaticProfile(props) {
                 credentials: "same-origin", // include, *same-origin, omit
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": "Basic " + Cookies.get('base64')
                 },
                 redirect: "follow", // manual, *follow, error
                 referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
@@ -111,7 +137,12 @@ function StaticProfile(props) {
             setFollowButtonText("Following");
             setFollowButtonVariant("primary");
         }
-        await fetch(`http://127.0.0.1:5072/followers/${userId}`)
+        await fetch(`http://127.0.0.1:5072/followers/${userId}`,
+        {
+            headers: {
+                "Authorization": "Basic " + Cookies.get('base64')
+            }
+        })
         .then(response => response.json())
         .then(data => {
         const followersIds = [];

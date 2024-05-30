@@ -12,6 +12,7 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import './Profile.css'
 import FormGroup from 'react-bootstrap/esm/FormGroup';
+import Cookies from 'js-cookie';
 
 
 function Profile(props) {
@@ -22,7 +23,12 @@ function Profile(props) {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        fetch(`http://127.0.0.1:5072/posts/${props.profile.userId}`)
+        fetch(`http://127.0.0.1:5072/posts/${props.profile.userId}`,
+        {
+            headers: {
+                "Authorization": "Basic " + Cookies.get('base64')
+            }
+        })
         .then(response => response.json())
         .then(data => {
         setApiPosts(data);
@@ -30,7 +36,12 @@ function Profile(props) {
     }, [props.profile.userId])
 
     useEffect(() => {
-        fetch(`http://127.0.0.1:5072/users/${props.profile.userId}`)
+        fetch(`http://127.0.0.1:5072/users/${props.profile.userId}`,
+        {
+            headers: {
+                "Authorization": "Basic " + Cookies.get('base64')
+            }
+        })
         .then(response => response.json())
         .then(data => {
         setUser(data[0]);
@@ -42,7 +53,7 @@ function Profile(props) {
             const components = apiPosts.map((post) => {
                 if (post.userId === user.userId){
                     return (
-                        <Post post={post} profile={user}/>
+                        <Post key = {post.postId} post={post} profile={user}/>
                     );
                 }
                 else return <></>   
@@ -66,6 +77,7 @@ function Profile(props) {
             method: "PUT", // *GET, POST, PUT, DELETE, etc.
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": "Basic " + Cookies.get('base64')
             },
             body: JSON.stringify({userId:0, username:e.currentTarget.elements.username.value, password:user.password, bio:e.currentTarget.elements.bio.value, profileImage:e.currentTarget.elements.picture.value}), // body data type must match "Content-Type" header
             });

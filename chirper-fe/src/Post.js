@@ -10,6 +10,7 @@ import Comment from './Comment';
 import Form from 'react-bootstrap/Form';
 import FormGroup from 'react-bootstrap/FormGroup';
 import {Link} from 'react-router-dom';
+import Cookies from 'js-cookie';
 //import {comments, users} from './mockDb';
 import './Post.css';
 
@@ -25,14 +26,24 @@ function Post(props){
     const [commentButtonVisible, setCommentButtonVisible] = useState(true);
 
     useEffect(() => {
-        fetch(`http://127.0.0.1:5072/comments/${props.post.postId}`)
+        fetch(`http://127.0.0.1:5072/comments/${props.post.postId}`,
+        {
+            headers: {
+                "Authorization": "Basic " + Cookies.get('base64')
+            }
+        })
         .then(response => response.json())
         .then(data => {
             setApiComments(data);
         })
 
         if (apiUser === null){
-            fetch(`http://127.0.0.1:5072/users/${props.post.userId}`)
+            fetch(`http://127.0.0.1:5072/users/${props.post.userId}`,
+            {
+                headers: {
+                    "Authorization": "Basic " + Cookies.get('base64')
+                }
+            })
             .then(response => response.json())
             .then(data => {
                 setApiUser(data[0]);
@@ -66,6 +77,7 @@ function Post(props){
             credentials: "same-origin", // include, *same-origin, omit
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": "Basic " + Cookies.get('base64')
             },
             redirect: "follow", // manual, *follow, error
             referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
@@ -86,7 +98,7 @@ function Post(props){
             const commentComps = apiComments.map((comment) => {
                 if (comment.postId === props.post.postId){
                     return (
-                        <Comment comment={comment}/>
+                        <Comment key={comment.commentId} comment={comment}/>
                     );
                 }
             })
