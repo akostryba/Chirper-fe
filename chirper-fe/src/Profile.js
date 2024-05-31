@@ -72,16 +72,23 @@ function Profile(props) {
 
     const saveEdits = (e) => {
         e.preventDefault()
+        let newUsername = e.currentTarget.elements.username.value;
+        let newBio = e.currentTarget.elements.bio.value;
+        let newPicture = e.currentTarget.elements.picture.value;
         fetch(`http://127.0.0.1:5072/user/${props.profile.userId}`, {
             method: "PUT", // *GET, POST, PUT, DELETE, etc.
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": "Basic " + Cookies.get('base64')
             },
-            body: JSON.stringify({userId:0, username:user.username, password:user.password, bio:e.currentTarget.elements.bio.value, profileImage:e.currentTarget.elements.picture.value}), // body data type must match "Content-Type" header
+            body: JSON.stringify({userId:0, username:e.currentTarget.elements.username.value, password:user.password, bio:e.currentTarget.elements.bio.value, profileImage:e.currentTarget.elements.picture.value}), // body data type must match "Content-Type" header
+            })
+            .then(response => {
+                Cookies.set('base64', btoa(newUsername+":"+user.password), { expires: 7 });
+                Cookies.set('user', JSON.stringify({userId:user.userId, username:newUsername, password:user.password, bio:newBio, profileImage:newPicture}), { expires: 7 });
             });
         setActiveModal(false);
-        setUser({userId:user.userId, username:user.username, password:user.password, bio:e.currentTarget.elements.bio.value, profileImage:e.currentTarget.elements.picture.value})
+        setUser({userId:user.userId, username:newUsername, password:user.password, bio:newBio, profileImage:newPicture});
     }
 
   if (user!==null) return (
@@ -116,7 +123,7 @@ function Profile(props) {
                         <Modal.Title>Edit Profile</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        {/* <FormGroup controlId="username">
+                        <FormGroup controlId="username">
                             <Form.Label>Username</Form.Label>
                             <Form.Control
                                 required
@@ -125,7 +132,7 @@ function Profile(props) {
                                 defaultValue={user.username}
                                 className='mb-2'
                             />
-                        </FormGroup> */}
+                        </FormGroup>
                         <FormGroup controlId="bio">
                             <Form.Label>Bio</Form.Label>
                             <Form.Control
