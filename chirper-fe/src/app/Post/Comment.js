@@ -5,7 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Image from 'react-bootstrap/Image';
 import {Link} from 'react-router-dom';
 import Cookies from 'js-cookie';
-import './Feed.css';
+import '../Feed/Feed.css';
 
 function Comment(props) {
 

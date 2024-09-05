@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import Post from './Post';
+import Post from '../Post/Post';
 import Image from 'react-bootstrap/Image'
 import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';

@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import Post from './Post';
+import Post from '../Post/Post';
 import Row from 'react-bootstrap/esm/Row';
 import './Feed.css';
 import Cookies from 'js-cookie';

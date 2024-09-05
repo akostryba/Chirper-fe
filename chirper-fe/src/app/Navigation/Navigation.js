@@ -3,7 +3,7 @@ import Navbar from 'react-bootstrap/Navbar'
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image';
-import logo from './logo.png';
+import logo from '../../logo.png';
 import './Navigation.css';
 
 function Navigation() {
